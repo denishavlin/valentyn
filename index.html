@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="cs">
+<head>
+  <meta charset="UTF-8">
+  <title>Eminka 🫶</title>
+  <style>
+    body {
+      height: 100vh;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      font-family: Arial, sans-serif;
+      background: linear-gradient(135deg, #ffe6f0, #e57fa1);
+      overflow: hidden;
+      transition: background 0.5s ease;
+      position: relative;
+    }
+
+    .question-box {
+      background: white;
+      padding: 25px 40px;
+      border-radius: 16px;
+      box-shadow: 0 8px 20px rgba(0,0,0,0.15);
+      text-align: center;
+      margin-bottom: 40px;
+      max-width: 90%;
+    }
+
+    h1 {
+      margin: 0;
+      font-size: 1.5em;
+      text-shadow: 1px 1px 3px rgba(0,0,0,0.2);
+    }
+
+    h1:hover {
+      animation: textShake 0.3s;
+    }
+
+    @keyframes textShake {
+      0%, 100% { transform: translateX(0); }
+      25% { transform: translateX(-5px); }
+      75% { transform: translateX(5px); }
+    }
+
+    .question-image {
+      margin-top: 15px;
+      max-width: 80px;
+      border-radius: 12px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+    }
+
+    .fun-text {
+      margin-top: 10px;
+      font-size: 1em;
+      color: #555;
+      font-style: italic;
+    }
+
+    .buttons {
+      position: relative;
+      width: 300px;
+      height: 150px;
+    }
+
+    button {
+      padding: 12px 20px;
+      font-size: 18px;
+      cursor: pointer;
+      border: none;
+      border-radius: 12px;
+      position: absolute;
+      box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+      transition: transform 0.2s ease, box-shadow 0.2s ease, left 0.2s ease, top 0.2s ease;
+    }
+
+    #yes {
+      background: #ea405f;
+      color: white;
+      left: 0;
+      top: 0;
+    }
+
+    #yes:active {
+      transform: scale(1.1);
+      box-shadow: 0 6px 12px rgba(0,0,0,0.3);
+    }
+
+    #yes:hover {
+      transform: scale(2);
+      box-shadow: 0 6px 12px rgba(0,0,0,0.3);
+    }
+
+    #no {
+      background: #666;
+      color: white;
+      left: 180px;
+      top: 0;
+    }
+
+    #loveImage {
+      margin-top: 30px;
+      max-width: 300px;
+      opacity: 0;
+      transform: scale(0.5);
+      transition: opacity 1s ease, transform 0.2s ease;
+      border-radius: 12px;
+      box-shadow: 0 8px 20px rgba(0,0,0,0.2);
+    }
+
+    #loveImage.show {
+      opacity: 1;
+      transform: scale(1);
+    }
+  </style>
+</head>
+<body>
+
+  <div class="question-box">
+    <h1>Ahoj expřítelkyně, trochu jsem tady bojoval s tím co ti tak dobře jde. Nechceš být můj Valentýn a trávit ho semnou u dobré večeře?💌</h1>
+    <img src="srdce.JPG" alt="❤️" class="question-image">
+    <p class="fun-text">Asi málo běháš, slovíčko NE ti nějak utíká 😜</p>
+  </div>
+
+  <div class="buttons">
+    <button id="yes">Ano</button>
+    <button id="no">Ne</button>
+  </div>
+
+  <img id="loveImage" src="valentyn.png" alt="❤️">
+  <audio id="loveSound" src="ahoj.mp3"></audio>
+
+  <script>
+    const noButton = document.getElementById("no");
+    const yesButton = document.getElementById("yes");
+    const loveImage = document.getElementById("loveImage");
+    const loveSound = document.getElementById("loveSound");
+    const container = document.querySelector(".buttons");
+
+    const triggerDistance = 150; // kdy tlačítko uteče
+    const maxMove = 200;         // velikost skoku tlačítka
+
+    function shakeButton() {
+      const currentX = noButton.offsetLeft;
+      const currentY = noButton.offsetTop;
+
+      let x = currentX + (Math.random() * 2 - 1) * maxMove;
+      let y = currentY + (Math.random() * 2 - 1) * maxMove;
+
+      const containerRect = container.getBoundingClientRect();
+      x = Math.max(0, Math.min(containerRect.width - noButton.offsetWidth, x));
+      y = Math.max(0, Math.min(containerRect.height - noButton.offsetHeight, y));
+
+      noButton.style.left = x + "px";
+      noButton.style.top = y + "px";
+    }
+
+    // tlačítko NE utíká jen když se myš přiblíží
+    document.addEventListener("mousemove", (e) => {
+      const mouseX = e.clientX;
+      const mouseY = e.clientY;
+
+      const buttonRect = noButton.getBoundingClientRect();
+      const buttonX = buttonRect.left + buttonRect.width / 2;
+      const buttonY = buttonRect.top + buttonRect.height / 2;
+
+      const distance = Math.hypot(mouseX - buttonX, mouseY - buttonY);
+
+      if(distance < triggerDistance) {
+        shakeButton(); // rychlý výrazný skok
+      }
+    });
+
+    function shakeImage() {
+      let positions = [-10, 10, -6, 6, -3, 3, 0];
+      let index = 0;
+      const interval = setInterval(() => {
+        loveImage.style.transform = `scale(1.1) translateX(${positions[index]}px)`;
+        index++;
+        if(index >= positions.length) {
+          clearInterval(interval);
+          loveImage.style.transform = 'scale(1)';
+        }
+      }, 50);
+    }
+
+    yesButton.addEventListener("click", () => {
+      alert("Správná odpověď juniore, ve 20:00 tě naberu a uděláme si hezčí večer u něčeho dobrého co myslíš?💋");
+      loveImage.classList.add("show");
+      loveSound.volume = 0.5;
+      loveSound.play().catch(e => console.log("Zvuk se nepodařilo přehrát:", e));
+      setTimeout(shakeImage, 200);
+    });
+  </script>
+</body>
+</html>
